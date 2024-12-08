@@ -82,7 +82,30 @@ class Hormiga:
         if C[-1] != self.pf:
             return np.inf
         return sum(A[C[t], C[t + 1]] for t in range(len(C) - 1))
+def insertar_datos():
+    global grid_entries
+    try:
+        A = np.array([
+            [0, 4, np.inf, np.inf, np.inf, 100],  # Desde el nodo 0
+            [np.inf, 0, 7, np.inf, np.inf, np.inf],  # Desde el nodo 1
+            [np.inf, 8, 0, 18, 9, np.inf],  # Desde el nodo 2
+            [1, np.inf, np.inf, 0, 12, 8],  # Desde el nodo 3
+            [np.inf, np.inf, 3, 11, 0, np.inf],  # Desde el nodo 4
+            [np.inf, np.inf, 6, np.inf, np.inf, 0]  # Desde el nodo 5
+        ])
 
+        # Validar tamaño del grid
+        if len(A) != len(grid_entries) or len(A[0]) != len(grid_entries[0]):
+            return
+
+        # Insertar los valores de la matriz A en el grid
+        for i in range(len(A)):
+            for j in range(len(A[i])):
+                value = "∞" if A[i, j] == np.inf else A[i, j]
+                grid_entries[i][j].delete(0, tk.END)
+                grid_entries[i][j].insert(0, value)
+    except Exception as e:
+        pass
 # Función principal
 def main():
     global tau

@@ -17,7 +17,82 @@ phi = 0.1
 # Variables globales para matriz y radio de cobertura
 matriz_entrada = None
 radio_cobertura = None
+matriz_salida=None
 grid_entries = []
+def mostrar_mapa_bits(matriz_resultado):
+    try:
+        # Validar que la matriz esté definida
+        if matriz_resultado is None:
+            raise ValueError("La matriz de salida no está disponible. Ejecute el algoritmo primero.")
+
+        # Tamaño del grid y de los píxeles
+        n_filas, n_columnas = matriz_resultado.shape
+        pixel_size = 20  # Tamaño de cada píxel
+
+        # Crear ventana para el mapa de bits
+        ventana_mapa = tk.Toplevel(root)
+        ventana_mapa.title("Mapa de Bits")
+
+        # Crear Canvas para dibujar
+        canvas = tk.Canvas(ventana_mapa, width=n_columnas * pixel_size, height=n_filas * pixel_size)
+        canvas.pack()
+
+        # Dibujar cada píxel
+        for i in range(n_filas):
+            for j in range(n_columnas):
+                color = "white"  # Blanco para 0
+                if matriz_resultado[i, j] == 2:
+                    color = "orange"  # Naranja para 2
+                elif matriz_resultado[i, j] == 3:
+                    color = "yellow"  # Amarillo para 3
+
+                # Dibujar un rectángulo con el color correspondiente
+                x1, y1 = j * pixel_size, i * pixel_size
+                x2, y2 = x1 + pixel_size, y1 + pixel_size
+                canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black")
+
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+    except Exception as e:
+        messagebox.showerror("Error", f"Error al mostrar el mapa de bits: {e}")
+
+
+def insertar_datos():
+    global grid_entries, matriz_entrada, radio_cobertura
+    try:
+        radio_cobertura = 2  # Definir el radio de cobertura
+        matriz_entrada = np.array([
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
+            [0, 0, 2, 0, 0, 0, 0, 2, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 2, 0, 0, 0, 0, 2],
+            [0, 0, 2, 0, 0, 0, 2, 2, 0, 0],
+            [2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ])
+
+        # Regenerar el grid si no coincide con el tamaño de la matriz
+        n = matriz_entrada.shape[0]
+        if len(grid_entries) != n or len(grid_entries[0]) != n:
+            entry_size.delete(0, tk.END)
+            entry_size.insert(0, str(n))
+            crear_grid()
+
+        # Insertar los valores en el grid
+        for i in range(len(grid_entries)):
+            for j in range(len(grid_entries[i])):
+                grid_entries[i][j].delete(0, tk.END)
+                grid_entries[i][j].insert(0, str(int(matriz_entrada[i, j])))
+
+        # Prellenar el campo de radio de cobertura
+        entry_radio.delete(0, tk.END)
+        entry_radio.insert(0, str(radio_cobertura))
+
+    except Exception as e:
+        messagebox.showerror("Error", f"Error al insertar datos: {e}")
+
 
 
 # Función para generar la matriz editable
@@ -51,12 +126,11 @@ def crear_grid():
         messagebox.showerror("Error", f"Entrada inválida: {e}")
 
 
-# Función para guardar la matriz y ejecutar el algoritmo
 def ejecutar_algoritmo():
+    global matriz_entrada, radio_cobertura, matriz_salida
     try:
         # Leer la matriz de entrada
         n = len(grid_entries)
-        global matriz_entrada, radio_cobertura
         matriz_entrada = np.zeros((n, n))
         for i in range(n):
             for j in range(n):
@@ -85,7 +159,7 @@ def ejecutar_algoritmo():
         )
 
         # Generar la matriz de salida
-        matriz_salida = matriz_entrada.copy()
+        matriz_salida = matriz_entrada.copy()  # Asignar globalmente
         for i, seleccion in enumerate(mejor_solucion):
             if seleccion == 1:
                 fila, columna = ubicaciones_candidatas[i]
@@ -204,6 +278,10 @@ entry_size.pack(pady=5)
 
 btn_generar = tk.Button(root, text="Generar Grid", command=crear_grid)
 btn_generar.pack(pady=10)
+btn_insertar = tk.Button(root, text="Insertar Datos", command=insertar_datos)
+btn_insertar.pack(pady=10)
+btn_mostrar_mapa = tk.Button(root, text="Mostrar Mapa de Bits", command=lambda: mostrar_mapa_bits(matriz_salida))
+btn_mostrar_mapa.pack(pady=10)
 
 frame_grid = tk.Frame(root)
 frame_grid.pack(pady=10)

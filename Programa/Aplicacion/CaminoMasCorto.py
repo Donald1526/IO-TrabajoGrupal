@@ -18,6 +18,31 @@ pi = 0  # Nodo inicial (predeterminado)
 pf = 5  # Nodo final (predeterminado)
 mejora = []  # Lista para guardar el mejor costo en cada iteración
 
+def insertar_datos():
+    global grid_entries
+    try:
+        A = np.array([
+            [0, 4, np.inf, np.inf, np.inf, 100],  # Desde el nodo 0
+            [np.inf, 0, 7, np.inf, np.inf, np.inf],  # Desde el nodo 1
+            [np.inf, 8, 0, 18, 9, np.inf],  # Desde el nodo 2
+            [1, np.inf, np.inf, 0, 12, 8],  # Desde el nodo 3
+            [np.inf, np.inf, 3, 11, 0, np.inf],  # Desde el nodo 4
+            [np.inf, np.inf, 6, np.inf, np.inf, 0]  # Desde el nodo 5
+        ])
+
+        # Validar tamaño del grid
+        if len(A) != len(grid_entries) or len(A[0]) != len(grid_entries[0]):
+            messagebox.showerror("Error", "El tamaño del grid no coincide con la matriz A.")
+            return
+
+        # Insertar los valores de la matriz A en el grid
+        for i in range(len(A)):
+            for j in range(len(A[i])):
+                value = "" if A[i, j] == np.inf else A[i, j]
+                grid_entries[i][j].delete(0, tk.END)
+                grid_entries[i][j].insert(0, value)
+    except Exception as e:
+        messagebox.showerror("Error", f"Error al insertar datos: {e}")
 
 # Clase Hormiga
 class Hormiga:
@@ -79,6 +104,8 @@ def crear_grid():
         # Desactivar el campo de texto y el botón
         entry_size.config(state="disabled")
         btn_crear.config(state="disabled")
+        btn_insertar = tk.Button(frame_control, text="Insertar Datos A", command=insertar_datos)
+        btn_insertar.grid(row=3, column=0, columnspan=2, pady=5)
 
         # Limpiar el frame_grid antes de crear el nuevo grid
         for widget in frame_grid.winfo_children():
