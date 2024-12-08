@@ -154,7 +154,7 @@ distancias = {}
 
 # Crear la ventana principal
 root = tk.Tk()
-root.title("ACO para TSP")
+root.title("ACO : Recorrido por todos los nodods.")
 
 frame_nodos = tk.Frame(root)
 frame_nodos.pack(pady=10)
