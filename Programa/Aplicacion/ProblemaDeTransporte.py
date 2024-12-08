@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import numpy as np
 import matplotlib.pyplot as plt
-import random
+
 # Parámetros del algoritmo de colonia de hormigas
 tau_inicial = 0.1  # Feromona inicial
 alpha = 1  # Peso de la feromona
@@ -10,6 +10,13 @@ beta = 2  # Peso de la heurística
 evaporacion = 0.5  # Tasa de evaporación
 n_hormigas = 10  # Número de hormigas
 n_iteraciones = 100  # Número de iteraciones
+
+costos = None
+demandas = None
+ofertas = None
+tau = None
+heuristica = None
+
 
 class Hormiga:
     def __init__(self):
@@ -39,16 +46,60 @@ class Hormiga:
             self.ofertas_restantes[origen] -= cantidad
             self.demandas_restantes[destino] -= cantidad
             self.costo_total += cantidad * costos[origen, destino]
+
+
+def colonia_de_hormigas():
+    global tau, heuristica
+    mejor_costo_global = float("inf")
+    mejor_asignacion_global = None
+    costos_mejor_iteracion = []
+
+    tau = np.full(costos.shape, tau_inicial)
+    heuristica = 1 / (costos + 1e-9)  # Evitar división por cero
+
+    for iteracion in range(n_iteraciones):
+        hormigas = [Hormiga() for _ in range(n_hormigas)]
+
+        # Cada hormiga construye una solución
+        for hormiga in hormigas:
+            hormiga.construir_solucion()
+
+        # Buscar la mejor solución de esta iteración
+        mejor_hormiga = min(hormigas, key=lambda h: h.costo_total)
+        if mejor_hormiga.costo_total < mejor_costo_global:
+            mejor_costo_global = mejor_hormiga.costo_total
+            mejor_asignacion_global = mejor_hormiga.asignacion
+
+        # Actualizar feromonas
+        actualizar_feromonas(hormigas)
+
+        # Guardar el mejor costo de esta iteración
+        costos_mejor_iteracion.append(mejor_costo_global)
+
+    return mejor_asignacion_global, mejor_costo_global, costos_mejor_iteracion
+
+
+def actualizar_feromonas(hormigas):
+    global tau
+    # Evaporación de feromonas
+    tau *= (1 - evaporacion)
+    for hormiga in hormigas:
+        for i in range(costos.shape[0]):
+            for j in range(costos.shape[1]):
+                if hormiga.asignacion[i, j] > 0:
+                    tau[i, j] += 1 / hormiga.costo_total  # Incremento proporcional al costo inverso
+
+
 def generar_matriz():
     try:
         n = int(entry_size.get())
         if n <= 0:
             raise ValueError("El tamaño debe ser positivo.")
-        
+
         # Limpiar el frame_grid antes de crear el nuevo grid
         for widget in frame_grid.winfo_children():
             widget.destroy()
-        
+
         global grid_entries
         grid_entries = []
         for i in range(n):
@@ -58,7 +109,7 @@ def generar_matriz():
                 entry.grid(row=i, column=j, padx=2, pady=2)
                 row_entries.append(entry)
             grid_entries.append(row_entries)
-        
+
         # Mostrar campos para ofertas y demandas
         label_ofertas.grid(row=0, column=0, pady=10, sticky="w")
         entry_ofertas.grid(row=0, column=1, pady=10, sticky="w")
@@ -68,36 +119,37 @@ def generar_matriz():
     except ValueError as e:
         messagebox.showerror("Error", str(e))
 
+
 def ejecutar_aco():
     try:
+        global costos, ofertas, demandas
         # Leer la matriz de costos
         n = len(grid_entries)
-        matriz_costos = np.zeros((n, n))
+        costos = np.zeros((n, n))
         for i in range(n):
             for j in range(n):
                 valor = grid_entries[i][j].get()
-                matriz_costos[i, j] = float(valor) if valor else np.inf
-        
+                costos[i, j] = float(valor) if valor else float("inf")
+
         # Leer ofertas y demandas
         ofertas = list(map(int, entry_ofertas.get().split(",")))
         demandas = list(map(int, entry_demandas.get().split(",")))
-        
+
         if len(ofertas) != n or len(demandas) != n:
             raise ValueError("La cantidad de ofertas y demandas debe coincidir con el tamaño de la matriz.")
-        
-        # Simulación del ACO (puedes reemplazar con tu implementación real)
-        mejor_asignacion = np.zeros((n, n))
-        mejor_costo = random.randint(50, 150)  # Simulación del costo mínimo
-        
+
+        mejor_asignacion, mejor_costo, costos_iteraciones = colonia_de_hormigas()
+
         # Mostrar resultados
-        messagebox.showinfo("Resultados", f"Matriz:\n{matriz_costos}\n\nMejor Costo: {mejor_costo}")
-        plt.plot([random.randint(50, mejor_costo) for _ in range(10)])
-        plt.title("Convergencia")
+        messagebox.showinfo("Resultados", f"Mejor Costo: {mejor_costo}\nAsignación:\n{mejor_asignacion}")
+        plt.plot(costos_iteraciones)
+        plt.title("Convergencia del costo")
         plt.xlabel("Iteraciones")
         plt.ylabel("Costo")
         plt.show()
     except ValueError as e:
         messagebox.showerror("Error", str(e))
+
 
 # Crear ventana principal
 root = tk.Tk()
