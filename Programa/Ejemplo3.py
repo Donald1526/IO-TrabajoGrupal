@@ -25,39 +25,6 @@ matriz_entrada = np.array([
     [2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ])
-def insertar_datos():
-    global grid_entries, matriz_entrada, radio_cobertura
-    try:
-        radio_cobertura = 2  # Definir el radio de cobertura
-        matriz_entrada = np.array([
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
-            [0, 0, 2, 0, 0, 0, 0, 2, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 2, 0, 0, 0, 0, 2],
-            [0, 0, 2, 0, 0, 0, 2, 2, 0, 0],
-            [2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ])
-
-        # Verificar que el tamaño del grid sea compatible con la matriz
-        if len(grid_entries) != matriz_entrada.shape[0] or len(grid_entries[0]) != matriz_entrada.shape[1]:
-            messagebox.showerror("Error", "El tamaño del grid no coincide con la matriz de datos.")
-            return
-
-        # Insertar los valores en el grid
-        for i in range(len(grid_entries)):
-            for j in range(len(grid_entries[i])):
-                grid_entries[i][j].delete(0, tk.END)
-                grid_entries[i][j].insert(0, str(int(matriz_entrada[i, j])))
-
-        # Prellenar el campo de radio de cobertura
-        entry_radio.delete(0, tk.END)
-        entry_radio.insert(0, str(radio_cobertura))
-
-    except Exception as e:
-        messagebox.showerror("Error", f"Error al insertar datos: {e}")
 
 # Generar la matriz de cobertura
 def generar_matriz_cobertura(matriz_entrada, radio_cobertura):

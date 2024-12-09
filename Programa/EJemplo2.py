@@ -6,9 +6,10 @@ import matplotlib.pyplot as plt
 origenes = ["A", "B", "C"]  # Orígenes
 destinos = ["X", "Y", "Z"]  # Destinos
 costos = np.array([  # Matriz de costos de transporte
-    [4, 3, 2],
-    [5, 8, 6],
-    [7, 4, 3]
+    #X #Y #Z
+    [4, 3, 2],#A
+    [5, 8, 6],#B
+    [7, 4, 3]#C
 ])
 demandas = [30, 40, 50]  # Demanda en los destinos
 ofertas = [40, 50, 30]   # Oferta en los orígenes
