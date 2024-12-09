@@ -4,17 +4,15 @@ Este repositorio contiene el trabajo grupal realizado como parte del curso de **
 ---
 
 ## Integrantes del Grupo
-1. Josue Alejandro Pizango Chang
-2. [Nombre del Integrante 2]
-3. [Nombre del Integrante 3]
-4. [Nombre del Integrante 4]
-5. [Nombre del Integrante 5]
-
+1. Pizango Chang, Josué Alejandro
+2. Porras Chavez, Miguel Angel
+3. Villanueva Ines, Jose Antonio
+4. Ortiz Herrera, Fabrizio Peter
+5. Melendez Blaz, Jhair Rousell
 ---
 
 ## Profesor
-- [Nombre del Profesor]
-
+- Cubas Becerra
 ---
 
 ## Propósito del Informe
