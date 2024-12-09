@@ -19,7 +19,7 @@ Este repositorio contiene el trabajo grupal realizado como parte del curso de **
 
 ## Propósito del Informe
 El informe tiene como finalidad:
-- Aplicar las herramientas de **Investigación Operativa**.
+- Presentar y explicar el tema **Colonia de Hormigas**.
 - Presentar los resultados obtenidos de manera clara.
 - Reflexionar sobre su aplicación práctica.
 
