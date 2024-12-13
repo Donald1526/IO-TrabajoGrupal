@@ -83,23 +83,18 @@ class Hormiga:
             return np.inf
         return sum(A[C[t], C[t + 1]] for t in range(len(C) - 1))
 
-# Función principal
 def main():
     global tau
     d = 0
     while d < N:
-        # Construimos la colonia
         Colonia = [Hormiga(pi, pf) for _ in range(nh)]
 
-        # Calculamos la trayectoria de cada hormiga
         for hormiga in Colonia:
             hormiga.trayectoria()
 
-        # Calculamos el costo de cada hormiga
         for hormiga in Colonia:
             hormiga.costo()
 
-        # Actualización de la feromona
         for i in range(L):
             for j in range(L):
                 for hormiga in Colonia:
